@@ -1,10 +1,15 @@
 import Logo from '@assets/images/Logo';
 import { ArrowUpRight, Plus } from 'phosphor-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Meal } from 'src/@types';
 import styled, { css } from 'styled-components/native';
 
 type MealsCardProps = {
-  inDiet: boolean;
+  inDiet: Meal['inDiet'];
+}
+
+type Statistics = {
+  healthyDiet: boolean;
 }
 
 export const Container = styled(SafeAreaView)`
@@ -28,16 +33,16 @@ export const ProfilePhoto = styled.Image`
   border-radius: 20px;
 `;
 
-export const Statistics = styled.TouchableOpacity`
+export const Statistics = styled.TouchableOpacity<Statistics>`
   margin-top: 32px;
   border-radius: 10px;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.COLORS.GREEN_LIGHT};
+  background-color: ${({ theme, healthyDiet }) => healthyDiet ? theme.COLORS.GREEN_LIGHT : theme.COLORS.RED_LIGHT};
 `;
 
-export const StatisticsIcon = styled(ArrowUpRight).attrs(({ theme }) => ({
-  color: theme.COLORS.GREEN_DARK
+export const StatisticsIcon = styled(ArrowUpRight).attrs<Statistics>(({ theme, healthyDiet }) => ({
+  color: healthyDiet ? theme.COLORS.GREEN_DARK : theme.COLORS.RED_DARK
 }))`
   margin-top: 8px;
   margin-right: 8px;
@@ -154,7 +159,7 @@ export const MealsCardInDiet = styled.View<MealsCardProps>`
   width: 14px;
   height: 14px;
   border-radius: 20px;
-  background-color: ${({ theme, inDiet }) => inDiet ? theme.COLORS.GREEN_MID : theme.COLORS.RED_MID};
+  background-color: ${({ theme, inDiet }) => inDiet === 'yes' ? theme.COLORS.GREEN_MID : theme.COLORS.RED_MID};
 `;
 
 

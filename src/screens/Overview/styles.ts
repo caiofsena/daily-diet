@@ -2,9 +2,13 @@ import { ArrowLeft, ArrowUpRight } from 'phosphor-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styled, { css } from 'styled-components/native';
 
-export const Container = styled(SafeAreaView)`
+type OverviewProps = {
+  inDiet: boolean;
+}
+
+export const Container = styled(SafeAreaView)<OverviewProps>`
   flex: 1;
-  background-color: ${({ theme }) => theme.COLORS.GREEN_LIGHT};
+  background-color: ${({ theme, inDiet }) => inDiet ? theme.COLORS.GREEN_LIGHT : theme.COLORS.RED_LIGHT};
 `;
 
 export const Header = styled.View`
@@ -15,8 +19,8 @@ export const Header = styled.View`
 
 export const BackButton = styled.TouchableOpacity``;
 
-export const BackIcon = styled(ArrowLeft).attrs(({ theme }) => ({
-  color: theme.COLORS.GREEN_DARK
+export const BackIcon = styled(ArrowLeft).attrs<OverviewProps>(({ theme, inDiet }) => ({
+  color: inDiet ? theme.COLORS.GREEN_DARK : theme.COLORS.RED_DARK
 }))`
   margin-top: 8px;
   margin-right: 8px;
@@ -46,7 +50,6 @@ export const Statistics = styled.TouchableOpacity`
   border-radius: 10px;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.COLORS.GREEN_LIGHT};
 `;
 
 export const StatisticsIcon = styled(ArrowUpRight).attrs(({ theme }) => ({

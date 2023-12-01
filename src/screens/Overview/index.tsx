@@ -2,12 +2,16 @@ import React from 'react';
 import * as S from './styles';
 import { PropsNavigation } from 'src/@types/navigation';
 
-export function Overview({ navigation } : PropsNavigation<'overview'>) {
+export function Overview({ navigation, route } : PropsNavigation<'overview'>) {
+
+  const { inDiet } = route.params; 
+  console.log('PARAMS: ', route.params);
+
   return (
-    <S.Container>
+    <S.Container inDiet={inDiet}>
       <S.Header>
-        <S.BackButton>
-          <S.BackIcon />
+        <S.BackButton onPress={navigation.goBack}>
+          <S.BackIcon inDiet={inDiet} />
         </S.BackButton>
       </S.Header>
       <S.Statistics>

@@ -2,7 +2,9 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
   home: undefined;
-  overview: undefined;
+  overview: {
+    inDiet: boolean;
+  };
   form: undefined;
   message: {
     title: string;

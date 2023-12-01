@@ -29,4 +29,11 @@ export const list: Meal[] = [
     hour: '20:15',
     inDiet: false
   },
+  {
+    name: 'Salgado',
+    description: 'Jantar',
+    date: '12.11.23',
+    hour: '20:15',
+    inDiet: false
+  },
 ]

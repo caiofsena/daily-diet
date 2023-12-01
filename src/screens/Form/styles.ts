@@ -1,4 +1,5 @@
-import { ArrowLeft, ArrowUpRight } from 'phosphor-react-native';
+import { ArrowLeft } from 'phosphor-react-native';
+import { MaskedTextInput } from 'react-native-mask-text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styled, { css } from 'styled-components/native';
 
@@ -15,6 +16,12 @@ export const Container = styled(SafeAreaView)`
   background-color: ${({ theme }) => theme.COLORS.GRAY_5};
 `;
 
+export const Prevent = styled.ScrollView.attrs({
+  contentContainerStyle: {
+    flex: 1
+  }
+})``;
+
 export const Header = styled.View`
   flex-direction: row;
   padding: 8px 24px;
@@ -23,7 +30,7 @@ export const Header = styled.View`
 export const BackButton = styled.TouchableOpacity``;
 
 export const BackIcon = styled(ArrowLeft).attrs(({ theme }) => ({
-  color: theme.COLORS.GREEN_DARK
+  color: theme.COLORS.GRAY_2
 }))``;
 
 export const HeaderTitle = styled.View`
@@ -47,7 +54,7 @@ export const General = styled.View`
   margin-bottom: -36px;
   padding: 0px 24px;
   border-radius: 20px;
-  background-color: ${({ theme }) => theme.COLORS.GRAY_7};
+  background-color: ${({ theme }) => theme.COLORS.WHITE};
 `;
 
 export const Label = styled.Text`
@@ -59,12 +66,41 @@ export const Label = styled.Text`
   `};
 `;
 
+export const Error = styled.Text`
+  margin-top: 8px;
+  ${({ theme }) => css`
+    color: ${theme.COLORS.RED_MID};
+    font-family: ${theme.FONT_FAMILY.BOLD};
+    font-size: ${theme.FONT_SIZE.XS}px;
+  `};
+`;
+
 export const Input = styled.TextInput`
   margin-top: 4px;
   height: 48px;
+  padding: 8px;
   border-width: 1px;
   border-radius: 4px;
   border-color: ${({ theme }) => theme.COLORS.GRAY_5};
+    ${({ theme }) => css`
+    color: ${theme.COLORS.GRAY_1};
+    font-family: ${theme.FONT_FAMILY.REGULAR};
+    font-size: ${theme.FONT_SIZE.MD}px;
+  `};
+`;
+
+export const InputMasked = styled(MaskedTextInput)`
+  margin-top: 4px;
+  height: 48px;
+  padding: 8px;
+  border-width: 1px;
+  border-radius: 4px;
+  border-color: ${({ theme }) => theme.COLORS.GRAY_5};
+    ${({ theme }) => css`
+    color: ${theme.COLORS.GRAY_1};
+    font-family: ${theme.FONT_FAMILY.REGULAR};
+    font-size: ${theme.FONT_SIZE.MD}px;
+  `};
 `;
 
 export const InputLarge = styled.TextInput`
@@ -146,7 +182,7 @@ export const Register = styled.View`
 `;
 
 export const ButtonRegister = styled.TouchableOpacity`
-  margin-bottom: 32px;
+  margin-bottom: 40px;
   padding: 16px 0px;
   align-items: center;
   border-radius: 10px;

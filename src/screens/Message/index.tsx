@@ -3,9 +3,13 @@ import * as S from './styles';
 import { PropsNavigation } from 'src/@types/navigation';
 
 export function Message({
-  route
+  navigation, route
 }: PropsNavigation<'message'>) {
   const { title, subtitle, image, buttonText } = route.params;
+
+  function goHome() {
+    navigation.navigate('home');
+  }
 
   return (
     <S.Container>
@@ -21,7 +25,7 @@ export function Message({
       }
       { image && <S.InDietImage source={image} /> }
       { buttonText && 
-        <S.ButtonHome>
+        <S.ButtonHome onPress={goHome}>
           <S.ButtonHomeText>{ buttonText }</S.ButtonHomeText>
         </S.ButtonHome> 
       }
