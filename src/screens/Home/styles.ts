@@ -58,11 +58,12 @@ export const StatisticsPercentage = styled.Text`
 `;
 
 export const StatisticsDescription = styled.Text`
-  margin-bottom: 16px;
+  /* margin-bottom: 16px; */
+  padding: 4px;
   ${({ theme }) => css`
     color: ${theme.COLORS.GRAY_2};
     font-family: ${theme.FONT_FAMILY.REGULAR};
-    font-size: ${theme.FONT_SIZE.MD}px;  
+    font-size: ${theme.FONT_SIZE.MD}px;
   `};
 `;
 

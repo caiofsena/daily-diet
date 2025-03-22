@@ -1,11 +1,12 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Meal } from '.';
 
 export type RootStackParamList = {
   home: undefined;
   overview: {
     inDiet: boolean;
   };
-  form: undefined;
+  form: undefined | {meal: Meal};
   message: {
     title: string;
     subtitle: {

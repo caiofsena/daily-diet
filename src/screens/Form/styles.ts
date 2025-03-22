@@ -1,6 +1,8 @@
+import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { ArrowLeft } from 'phosphor-react-native';
 import { MaskedTextInput } from 'react-native-mask-text';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styled, { css } from 'styled-components/native';
 
 type WithinDietProps = {
@@ -11,9 +13,13 @@ type WithinDietSymbolProps = {
   value: 'yes' | 'no';
 }
 
-export const Container = styled(SafeAreaView)`
+type WithinEditable = {
+  isEditable?: boolean;
+};
+
+export const Container = styled(SafeAreaView)<WithinEditable>`
   flex: 1;
-  background-color: ${({ theme }) => theme.COLORS.GRAY_5};
+  background-color: ${({ theme, isEditable }) => isEditable ? theme.COLORS.GREEN_LIGHT : theme.COLORS.GRAY_5};
 `;
 
 export const Prevent = styled.ScrollView.attrs({
@@ -103,8 +109,23 @@ export const InputMasked = styled(MaskedTextInput)`
   `};
 `;
 
+export const FormTime = styled(RNDateTimePicker)`
+  margin-top: 4px;
+  height: 48px;
+  padding: 8px;
+  border-width: 1px;
+  border-radius: 4px;
+  border-color: ${({ theme }) => theme.COLORS.GRAY_5};
+    ${({ theme }) => css`
+    color: ${theme.COLORS.GRAY_1};
+    font-family: ${theme.FONT_FAMILY.REGULAR};
+    font-size: ${theme.FONT_SIZE.MD}px;
+  `};
+`;
+
 export const InputLarge = styled.TextInput`
   margin-top: 4px;
+  padding: 5px;
   height: 120px;
   border-width: 1px;
   border-radius: 4px;
@@ -176,23 +197,39 @@ export const No = styled.TouchableOpacity<WithinDietProps>`
   `};
 `;
 
-export const Register = styled.View`
+export const RegisterButtons = styled.View`
   flex: 1;
   justify-content: flex-end;
+  margin-bottom: 40px;
 `;
 
-export const ButtonRegister = styled.TouchableOpacity`
-  margin-bottom: 40px;
+export const Register = styled.View`
+  margin-bottom: 10px;
+`;
+
+export const ButtonRegister = styled.TouchableOpacity<WithinEditable>`
+  flex-direction: row;
+  justify-content: center;
   padding: 16px 0px;
   align-items: center;
-  border-radius: 10px;
-  background-color: ${({ theme }) => theme.COLORS.GRAY_2};
+  border-radius: 6px;
+  border-width: 1px;
+  border-color: ${({ isEditable=false, theme }) => isEditable ? theme.COLORS.WHITE : theme.COLORS.GRAY_1};
+  background-color: ${({ isEditable=false, theme }) => isEditable ? theme.COLORS.GRAY_2 : theme.COLORS.WHITE};
 `;
 
-export const ButtonRegisterText = styled.Text`
-  ${({ theme }) => css`
-    color: ${theme.COLORS.WHITE};
+export const ButtonRegisterIcon = styled(Icon)<WithinEditable>`
+  margin-right: 12px;
+  ${({ isEditable=false, theme }) => css`
+    color: ${isEditable ? theme.COLORS.WHITE : theme.COLORS.BLACK};
+  `};
+`;
+
+export const ButtonRegisterText = styled.Text<WithinEditable>`
+  ${({ isEditable=false, theme }) => css`
+    color: ${isEditable ? theme.COLORS.WHITE : theme.COLORS.BLACK};
     font-family: ${theme.FONT_FAMILY.BOLD};
     font-size: ${theme.FONT_SIZE.SM}px;  
   `};
 `;
+

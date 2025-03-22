@@ -44,6 +44,8 @@ export const InDietImage = styled.Image`
 `;
 
 export const ButtonHome = styled.TouchableOpacity`
+  width: 191px;
+  height: 50px;
   margin-top: 32px;
   padding: 16px;
   justify-content: center;

@@ -1,20 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import * as S from './styles';
 import { PropsNavigation } from 'src/@types/navigation';
 import { Controller, useForm } from 'react-hook-form';
-import { mealsAdd } from '@storage/index';
-import { Alert } from 'react-native';
+import { mealsAdd, mealsEdit } from '@storage/index';
+import { Alert, TextInput } from 'react-native';
 import { Meal } from 'src/@types';
+import { useRoute } from '@react-navigation/native';
 
 export function Form({ navigation } : PropsNavigation<'form'>) {
+  const route = useRoute();
+  const meal = route?.params?.meal ? route.params.meal : null;
+  const isEditable = meal ? true : false;
   const [ inDiet, setInDiet ] = React.useState<Meal['inDiet']>();
+  const [ doEdit, setDoEdit ] = React.useState(false);
   const { control, handleSubmit, setValue, formState: { errors } } = useForm<Meal>({
-    defaultValues: {}
+    defaultValues: meal ? meal : {}
   });
+
+  useEffect(() => {}, []);
 
   function handleInDiet(inDiet: Meal['inDiet']) {
     setValue('inDiet', inDiet);
     setInDiet(inDiet)
+  }
+
+  function handleDoEdit() {
+    setDoEdit(true);
   }
 
   async function saveMeal(meal: Meal) {
@@ -33,17 +44,25 @@ export function Form({ navigation } : PropsNavigation<'form'>) {
     } catch (error) {
       Alert.alert('Ocorreu um erro insperado!');      
     }
-    
+  }
+
+  async function editMeal(meal: Meal) {
+    try {
+      await mealsEdit(meal);
+      navigation.navigate('home')
+    } catch (error) {
+      Alert.alert('Ocorreu um erro insperado!');      
+    }
   }
 
   return (
-    <S.Container>
-    <S.Header>
+    <S.Container isEditable={isEditable}>
+      <S.Header>
         <S.BackButton onPress={navigation.goBack}>
           <S.BackIcon />
         </S.BackButton>
         <S.HeaderTitle>
-          <S.HeaderTitleValue>Nova refeição</S.HeaderTitleValue>
+          <S.HeaderTitleValue>{isEditable ? 'Editar refeição' : 'Nova refeição'}</S.HeaderTitleValue>
         </S.HeaderTitle>
       </S.Header>
         <S.General>
@@ -88,6 +107,8 @@ export function Form({ navigation } : PropsNavigation<'form'>) {
                 onChangeText={onChange}
                 value={value}   
                 numberOfLines={8}
+                textAlignVertical='top'
+                multiline
               />
             )}
             name="description"
@@ -160,13 +181,42 @@ export function Form({ navigation } : PropsNavigation<'form'>) {
             />
           </S.WithinDiet>
           {errors.inDiet && <S.Error>Campo obrigatório</S.Error>}
-          <S.Register>
-            <S.ButtonRegister onPress={handleSubmit(saveMeal)}>
-              <S.ButtonRegisterText>Cadastrar refeição</S.ButtonRegisterText>
-            </S.ButtonRegister>
-          </S.Register>
-      </S.Prevent>
-        </S.General>
-    </S.Container>
-  );
-}
+          <S.RegisterButtons>
+            {isEditable ?
+              <>
+                <S.Register>
+                  <S.ButtonRegister isEditable onPress={handleDoEdit}>
+                    <S.ButtonRegisterIcon isEditable name='pencil' size={18} />
+                    <S.ButtonRegisterText isEditable>{'Editar refeição'}</S.ButtonRegisterText>
+                  </S.ButtonRegister>
+                </S.Register>
+                <S.Register>
+                  <S.ButtonRegister onPress={handleSubmit(saveMeal)}>
+                    <S.ButtonRegisterIcon name='trash-can-outline' size={18} />
+                    <S.ButtonRegisterText>{'Excluir refeição'}</S.ButtonRegisterText>
+                  </S.ButtonRegister>
+                </S.Register>
+              </>
+            :
+            <>
+              {doEdit
+                ?
+                <S.Register>
+                  <S.ButtonRegister onPress={handleSubmit(editMeal)}>
+                    <S.ButtonRegisterText>{'Salvar alterações'}</S.ButtonRegisterText>
+                  </S.ButtonRegister>
+                </S.Register>
+                :
+                <S.Register>
+                  <S.ButtonRegister isEditable onPress={handleSubmit(saveMeal)}>
+                    <S.ButtonRegisterText isEditable>{'Cadastrar refeição'}</S.ButtonRegisterText>
+                  </S.ButtonRegister>
+                </S.Register>
+              }
+            </>
+            }
+          </S.RegisterButtons>
+        </S.Prevent>
+      </S.General>
+  </S.Container>
+)}

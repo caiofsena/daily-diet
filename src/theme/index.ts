@@ -8,6 +8,7 @@ export default {
     GRAY_6: '#EFF0F0',
     GRAY_7: '#FAFAFA',
     WHITE: '#FFFFFF',
+    BLACK: '#000000',
     RED_DARK: '#BF3B44',
     RED_MID: '#F3BABD',
     RED_LIGHT: '#F4E6E7',

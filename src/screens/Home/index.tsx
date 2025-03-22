@@ -2,7 +2,7 @@ import React from 'react';
 import * as S from './styles';
 import { PropsNavigation } from 'src/@types/navigation';
 import { Meal } from 'src/@types';
-import { mealsGetAll } from '@storage/index';
+import { convertDate, mealsGetAll, mealsGetId } from '@storage/index';
 import { useFocusEffect } from '@react-navigation/native';
 
 type MealsSectionList = {
@@ -26,26 +26,36 @@ export function Home({ navigation } : PropsNavigation<'home'>) {
     navigation.navigate('form');
   }
 
-  function getStatisticsDiet() {
+  async function goEditMeal(id: number) {
+    const meal = await mealsGetId(id);
+    if (meal) {
+      navigation.navigate('form', {meal: meal});
+    } 
+  }
+
+  async function getStatisticsDiet() {
     const totalDiet = storageList.length;
     const inDiet = storageList.filter(item => item.inDiet === 'yes').length;
-    const percentageInDiet = (100 * inDiet / totalDiet);
-    console.log('PERCENTAGE: ', inDiet, totalDiet, percentageDiet);
-
+    const percentageInDiet = (inDiet > 0 ? 100 * inDiet / totalDiet : 0);
+    
     if (percentageInDiet >= 60) 
       setHealthyDiet(true);
     else 
-      setHealthyDiet(false);
-
+    setHealthyDiet(false);
+  
     setPercentageDiet(percentageInDiet.toFixed(2));
+    console.log('PERCENTAGE: ', inDiet, totalDiet, percentageDiet, healthyDiet);
   }
 
   async function getStorageList() {
     const storage: Meal[] = await mealsGetAll();
+    // const storageDateOrdered = storage.sort((a, b) => a.date < b.date ? -1 : 1);
     setStorageList(storage);
 
     const dateList = 
-      [...new Map(storage.map(item => [item.date, item])).values()].map(value => value.date)
+      [...new Map(storage.map(item => [item.date, item])).values()]
+        .map(value => value.date)
+        .sort((a, b) => a > b ? -1 : 1);
     console.log('DATE LIST: ', dateList);
     let mealsSectionList: MealsSectionList[] = [];
     dateList.forEach(date => {
@@ -58,17 +68,31 @@ export function Home({ navigation } : PropsNavigation<'home'>) {
         }
       })
       mealsSectionList.push({
-        title: date.replaceAll('/', '.'),
-        data 
+        title: convertDate(date),
+        data,
       })
     })
     setList(mealsSectionList);
   }
-  
+
+  const renderItem = ({ item }: { item: Meal }) => {
+    return (
+      <S.MealsCard onPress={() => goEditMeal(item.id)}>
+        <S.MealsCardHour>{item.hour}</S.MealsCardHour>
+        <S.MealsDivider />
+        <S.MealsCardName>{item.name}</S.MealsCardName>
+        <S.MealsCardInDiet inDiet={item.inDiet} />
+      </S.MealsCard>
+    )
+  }
+
   useFocusEffect(React.useCallback(() => {
     getStorageList();
-    getStatisticsDiet();
   }, []));
+
+  useFocusEffect(React.useCallback(() => {
+    getStatisticsDiet();
+  }, [list]));
 
   return (
     <S.Container>
@@ -76,15 +100,24 @@ export function Home({ navigation } : PropsNavigation<'home'>) {
         <S.LogoSvg />
         <S.ProfilePhoto source={require('@assets/images/perfil.jpg')} />
       </S.Header>
-      <S.Statistics onPress={goStatistics} healthyDiet={healthyDiet}>
-        <S.StatisticsIcon healthyDiet={healthyDiet} />
-        <S.StatisticsPercentage>
-          {percentageDiet}%
-        </S.StatisticsPercentage>
-        <S.StatisticsDescription>
-          das refeições dentro da dieta
-        </S.StatisticsDescription>
-      </S.Statistics>
+      { storageList.length !== 0 ? (
+        <S.Statistics onPress={goStatistics} healthyDiet={healthyDiet}>
+          <S.StatisticsIcon healthyDiet={healthyDiet} />
+          <S.StatisticsPercentage>
+            {Number(percentageDiet) === 0 ? 'Nenhuma' : `${percentageDiet}%`}
+          </S.StatisticsPercentage>
+          <S.StatisticsDescription>
+            das refeições dentro da dieta
+          </S.StatisticsDescription>
+        </S.Statistics>
+      ) : 
+      (
+        <S.Statistics>
+          <S.StatisticsDescription>
+            Aqui você vai ver se está dentro da dieta. Adicione a primeira refeição!
+          </S.StatisticsDescription>
+        </S.Statistics>
+      )}
       <S.Meals>
         <S.MealsTitle>
           Refeições
@@ -96,16 +129,9 @@ export function Home({ navigation } : PropsNavigation<'home'>) {
       </S.Meals>
       <S.MealsList 
         sections={list} 
-        keyExtractor={(item, index) => item + index}
-        renderItem={({item}: {item: Meal}) => (
-            <S.MealsCard>
-              <S.MealsCardHour>{item.hour}</S.MealsCardHour>
-              <S.MealsDivider />
-              <S.MealsCardName>{item.name}</S.MealsCardName>
-              <S.MealsCardInDiet inDiet={item.inDiet} />
-            </S.MealsCard>
-        )}
-        renderSectionHeader={({ section: {title}}) => (
+        keyExtractor={(item: Meal, index: number) => item.name + index}
+        renderItem={renderItem}
+        renderSectionHeader={({ section: { title }}: {section: MealsSectionList}) => (
           <S.MealsHeader>{title}</S.MealsHeader>
         )}
         showsVerticalScrollIndicator={false}
